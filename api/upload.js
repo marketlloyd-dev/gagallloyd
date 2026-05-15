@@ -1,9 +1,5 @@
 import { put } from '@vercel/blob';
 
-export const config = {
-  runtime: 'edge',
-};
-
 export default async function handler(req) {
   if (req.method !== 'POST') {
     return new Response('Method not allowed', { status: 405 });
@@ -19,7 +15,6 @@ export default async function handler(req) {
       );
     }
 
-    // Dapatkan URL unggahan langsung (presigned) dan URL publik
     const { url, downloadUrl } = await put(filename, {
       contentType,
       access: 'public',
