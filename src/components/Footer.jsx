@@ -13,9 +13,9 @@ export default function Footer() {
           <div>
             <h4 className="text-white font-semibold mb-3">Kontak</h4>
             <div className="space-y-2 text-green-300/60 text-sm">
-              <p className="flex items-center gap-2"><MapPin size={14} /> Kampus STMIK</p>
-              <p className="flex items-center gap-2"><Phone size={14} /> 08xx-xxxx-xxxx</p>
-              <p className="flex items-center gap-2"><Mail size={14} /> himmah@stmik.ac.id</p>
+              <p className="flex items-center gap-2"><MapPin size={14} /> Jln. Raya Mataram - Lb.Lombok KM. 49  Anjani Kec.Suralaga-LOTIM</p>
+              <p className="flex items-center gap-2"><Phone size={14} /> +62895326960477</p>
+              <p className="flex items-center gap-2"><Mail size={14} /> himmahnwkomstmik@gmail.com</p>
             </div>
           </div>
           <div>
