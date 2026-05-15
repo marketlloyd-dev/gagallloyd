@@ -2,11 +2,12 @@ import { useState, useRef } from 'react';
 import { useApp } from '../context/AppContext';
 import { adminAccounts } from '../data/config';
 import {
-  LogOut, Plus, Trash2, Edit3, Save, X, Upload, Check, Image as ImageIcon
+  LogOut, Plus, Trash2, Edit3, Save, X, Check
 } from 'lucide-react';
 
-// Fungsi upload ke Vercel Blob
+// Fungsi upload ke Vercel Blob via serverless function
 async function uploadToBlob(file) {
+  // 1. Minta signed URL dari API
   const response = await fetch('/api/upload', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -15,24 +16,30 @@ async function uploadToBlob(file) {
       contentType: file.type,
     }),
   });
+
   if (!response.ok) {
-    const err = await response.json();
-    throw new Error(err.error || 'Gagal mendapatkan URL upload');
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.error || 'Gagal mendapatkan URL upload');
   }
+
   const { uploadUrl, blobUrl } = await response.json();
 
+  // 2. Upload file langsung ke Blob storage
   const uploadResponse = await fetch(uploadUrl, {
     method: 'PUT',
     body: file,
     headers: { 'Content-Type': file.type },
   });
-  if (!uploadResponse.ok) throw new Error('Gagal mengupload file ke Blob storage');
 
-  return blobUrl;
+  if (!uploadResponse.ok) {
+    throw new Error('Gagal mengupload file ke Blob storage');
+  }
+
+  return blobUrl; // URL publik gambar
 }
 
+// Hapus blob (hanya jika URL berasal dari Vercel Blob)
 async function deleteBlob(url) {
-  // Hanya hapus jika URL adalah blob Vercel (mengandung 'vercel-storage')
   if (!url || !url.includes('vercel-storage')) return;
   await fetch('/api/delete', {
     method: 'POST',
@@ -132,7 +139,6 @@ export default function Admin() {
       }
       setIsUploading(false);
     } else if (editBeritaId) {
-      // jika edit dan tidak mengganti foto, gunakan foto lama dari berita yang ada
       const existing = berita.find(b => b.id === editBeritaId);
       fotoUrl = existing?.foto || '';
     }
