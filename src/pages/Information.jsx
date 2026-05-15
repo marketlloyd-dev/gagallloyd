@@ -9,9 +9,10 @@ export default function Information() {
   const { ketua, sekretaris, bendahara } = pengurusInti;
 
   const pengurusList = [
+    { ...bendahara, jabatan: 'Bendahara' },
     { ...ketua, jabatan: 'Ketua Komisariat' },
     { ...sekretaris, jabatan: 'Sekretaris' },
-    { ...bendahara, jabatan: 'Bendahara' },
+    
   ];
 
   return (

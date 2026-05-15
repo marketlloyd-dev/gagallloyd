@@ -1,7 +1,3 @@
-export const config = {
-  runtime: 'nodejs',
-};
-
 import { del } from '@vercel/blob';
 
 export default async function handler(req) {

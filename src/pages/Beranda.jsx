@@ -33,7 +33,7 @@ export default function Beranda() {
             Komisariat STMIK
           </p>
           <p className="mt-4 text-green-300/80 max-w-2xl mx-auto text-sm sm:text-base animate-fadeIn">
-            Himpunan Mahasiswa Nahdlatul Wathan — Bergerak, Mengabdi, Berprestasi
+            Himpunan Mahasiswa Nahdlatul Wathan Komisariat STMIK NW Anjani
           </p>
         </div>
       </div>
@@ -66,7 +66,6 @@ export default function Beranda() {
                 <h3 className="text-white font-semibold text-lg">{person.nama}</h3>
                 <p className="text-green-300/80 text-sm">NIM: {person.nim}</p>
                 <p className="text-green-300/70 text-sm">{person.jurusan}</p>
-                <p className="text-green-300/60 text-xs">Angkatan {person.angkatan}</p>
               </div>
             ))}
           </div>

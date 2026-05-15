@@ -1,7 +1,3 @@
-export const config = {
-  runtime: 'nodejs',
-};
-
 import { put } from '@vercel/blob';
 
 export default async function handler(req) {
@@ -19,13 +15,14 @@ export default async function handler(req) {
       });
     }
 
-    const { url, downloadUrl } = await put(filename, {
+    const { url } = await put(filename, {
       contentType,
       access: 'public',
-      token: process.env.BLOB_READ_WRITE_TOKEN,
+      token: process.env.BLOB_READ_WRITE_TOKEN, // token dibaca dari environment Vercel
     });
 
-    return new Response(JSON.stringify({ uploadUrl: url, blobUrl: downloadUrl }), {
+    // Kembalikan URL unggahan (uploadUrl) saja, klien akan upload langsung
+    return new Response(JSON.stringify({ uploadUrl: url }), {
       status: 200,
       headers: { 'Content-Type': 'application/json' },
     });

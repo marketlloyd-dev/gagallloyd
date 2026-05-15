@@ -6,27 +6,25 @@ import {
   LogOut, Plus, Trash2, Edit3, Save, X, Check
 } from 'lucide-react';
 
-const BLOB_TOKEN = import.meta.env.VITE_BLOB_READ_WRITE_TOKEN;
 
-// Upload file ke Vercel Blob
+
+// Fungsi untuk upload file ke Vercel Blob melalui API server
 async function uploadToBlob(file) {
-  if (!BLOB_TOKEN) throw new Error('Token Blob tidak ditemukan');
   const blob = await upload(file.name, file, {
     access: 'public',
-    token: BLOB_TOKEN,
+    handleUploadUrl: '/api/upload', // memanggil serverless function kita
   });
   return blob.url;
 }
 
-// Hapus file dari Vercel Blob dengan fetch langsung
+// Fungsi untuk menghapus blob melalui API server
 async function deleteBlob(url) {
   if (!url || !url.includes('vercel-storage')) return;
   try {
-    await fetch(url, {
-      method: 'DELETE',
-      headers: {
-        Authorization: `Bearer ${BLOB_TOKEN}`,
-      },
+    await fetch('/api/delete', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ url }),
     });
   } catch (err) {
     console.error('Gagal menghapus blob:', err);
