@@ -6,7 +6,7 @@ import {
   Newspaper, Users, Image, Palette, User, TrendingUp, Calendar,
   Tag, Bold, Italic, Underline, Strikethrough, Link, Quote,
   Heading1, Heading2, List, ListOrdered, ImagePlus, Search,
-  BookOpen, Shield, Menu, Clock, BarChart3, Key
+  BookOpen, Shield, Menu, Clock, BarChart3, Key, Bell, CheckSquare
 } from 'lucide-react';
 import SEO from '../components/SEO';
 import CropModal from '../components/CropModal';
@@ -221,6 +221,10 @@ export default function Admin() {
     anggotaList, saveAnggotaList,
     beritaInternal, saveBeritaInternal,
     inviteCode, saveInviteCode,
+    presensiList,      // <-- tambahkan
+    pengumumanList,    // <-- tambahkan
+    savePengumuman,    // <-- tambahkan
+    deletePengumuman,  // <-- tambahkan
   } = useApp();
 
   const [username, setUsername] = useState('');
@@ -301,6 +305,11 @@ export default function Admin() {
   const [editBeritaInternalId, setEditBeritaInternalId] = useState(null);
 
   const [inviteCodeForm, setInviteCodeForm] = useState(inviteCode);
+  const [pengumumanForm, setPengumumanForm] = useState({
+   judul: '',
+   isi: '',
+    tanggal: '',
+  });
 
   const [activityLog, setActivityLog] = useState(() => {
     const saved = localStorage.getItem('himmah_activity_log');
@@ -732,7 +741,22 @@ export default function Admin() {
     logActivity('Mengubah kode undangan');
     alert('Kode undangan berhasil disimpan!');
   };
+  // --- Fungsi Pengumuman ---
+const handlePengumumanSubmit = (e) => {
+  e.preventDefault();
+  if (!pengumumanForm.judul || !pengumumanForm.isi) return;
+  const newPengumuman = { ...pengumumanForm, id: Date.now() };
+  savePengumuman(newPengumuman);
+  setPengumumanForm({ judul: '', isi: '', tanggal: '' });
+  logActivity('Menambah pengumuman');
+};
 
+const handleDeletePengumuman = (id) => {
+  if (window.confirm('Hapus pengumuman ini?')) {
+    deletePengumuman(id);
+    logActivity('Menghapus pengumuman');
+  }
+};
   const tabs = [
     { key: 'dashboard', label: 'Dashboard', icon: <TrendingUp size={16} /> },
     { key: 'berita', label: 'Berita', icon: <Newspaper size={16} /> },
@@ -747,6 +771,8 @@ export default function Admin() {
     { key: 'invite', label: 'Undangan', icon: <Key size={16} /> },
     { key: 'countdown', label: 'Countdown', icon: <Clock size={16} /> },
     { key: 'polling', label: 'Polling', icon: <BarChart3 size={16} /> },
+    { key: 'pengumuman', label: '📢 Pengumuman', icon: <Bell size={16} /> },
+    { key: 'presensi', label: '📋 Presensi', icon: <CheckSquare size={16} /> },
   ];
 
   const handleTabChange = (tab) => {
@@ -1147,6 +1173,114 @@ export default function Admin() {
                   </div>
                 </div>
               )}
+
+              {activeTab === 'pengumuman' && (
+  <div className="space-y-6">
+    <div>
+      <h2 className="text-2xl font-playfair font-bold text-white">Pengumuman</h2>
+      <p className="text-gray-400 text-sm mt-1">Kelola pengumuman untuk anggota</p>
+    </div>
+    <div className="bg-[#111a11] border border-green-900/30 rounded-2xl p-6">
+      <h3 className="text-white font-bold text-lg mb-4">➕ Tambah Pengumuman</h3>
+      <form onSubmit={handlePengumumanSubmit} className="space-y-3">
+        <input
+          type="text"
+          placeholder="Judul Pengumuman"
+          value={pengumumanForm.judul}
+          onChange={(e) => setPengumumanForm({ ...pengumumanForm, judul: e.target.value })}
+          className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white"
+          required
+        />
+        <textarea
+          placeholder="Isi Pengumuman"
+          value={pengumumanForm.isi}
+          onChange={(e) => setPengumumanForm({ ...pengumumanForm, isi: e.target.value })}
+          rows="3"
+          className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white resize-none"
+          required
+        />
+        <input
+          type="date"
+          value={pengumumanForm.tanggal}
+          onChange={(e) => setPengumumanForm({ ...pengumumanForm, tanggal: e.target.value })}
+          className="px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white"
+        />
+        <button
+          type="submit"
+          className="px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-xl text-sm font-medium"
+        >
+          <Plus size={16} className="inline mr-1" /> Kirim Pengumuman
+        </button>
+      </form>
+    </div>
+    
+    <div className="bg-[#111a11] border border-green-900/30 rounded-2xl p-6">
+      <h3 className="text-white font-bold text-lg mb-4">📋 Daftar Pengumuman</h3>
+      {pengumumanList.length === 0 ? (
+        <p className="text-gray-400 text-sm">Belum ada pengumuman.</p>
+      ) : (
+        <div className="space-y-2">
+          {pengumumanList.map((p) => (
+            <div key={p.id} className="flex items-center justify-between p-3 bg-white/5 rounded-lg">
+              <div>
+                <p className="text-white text-sm font-medium">{p.judul}</p>
+                <p className="text-gray-400 text-xs">{p.tanggal || '-'}</p>
+                <p className="text-green-300/70 text-xs mt-1 line-clamp-2">{p.isi}</p>
+              </div>
+              <button
+                onClick={() => handleDeletePengumuman(p.id)}
+                className="p-2 text-red-400 hover:bg-red-500/10 rounded-lg flex-shrink-0"
+              >
+                <Trash2 size={14} />
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  </div>
+)}
+
+{activeTab === 'presensi' && (
+  <div className="space-y-6">
+    <div>
+      <h2 className="text-2xl font-playfair font-bold text-white">Rekap Presensi</h2>
+      <p className="text-gray-400 text-sm mt-1">Lihat presensi anggota hari ini</p>
+    </div>
+    
+    <div className="bg-[#111a11] border border-green-900/30 rounded-2xl p-6">
+      <div className="flex items-center justify-between mb-4">
+        <h3 className="text-white font-bold text-lg">
+          📋 Presensi Hari Ini ({new Date().toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })})
+        </h3>
+        <span className="text-green-400 text-sm bg-green-500/10 px-3 py-1 rounded-full">
+          Total: {presensiList.filter(p => p.tanggal === new Date().toISOString().slice(0, 10)).length} hadir
+        </span>
+      </div>
+      
+      {presensiList.filter(p => p.tanggal === new Date().toISOString().slice(0, 10)).length === 0 ? (
+        <p className="text-gray-400 text-sm">Belum ada yang presensi hari ini.</p>
+      ) : (
+        <div className="space-y-2">
+          {presensiList
+            .filter(p => p.tanggal === new Date().toISOString().slice(0, 10))
+            .map((p) => (
+              <div key={p.id} className="flex items-center justify-between bg-white/5 rounded-lg p-3">
+                <div>
+                  <p className="text-white text-sm font-medium">{p.nama}</p>
+                  <p className="text-gray-400 text-xs">{p.nim} · {p.divisi}</p>
+                </div>
+                <div className="text-right">
+                  <p className="text-green-400 text-xs">{p.waktu}</p>
+                  <span className="text-green-400 text-xs bg-green-500/10 px-2 py-1 rounded-full">Hadir</span>
+                </div>
+              </div>
+            ))}
+        </div>
+      )}
+    </div>
+  </div>
+)}
 
               {activeTab === 'countdown' && (
                 <div className="space-y-6">
