@@ -21,7 +21,7 @@ export default function DevelopmentAlert() {
         <div className="flex-1">
           <h4 className="text-red-400 font-bold uppercase text-sm tracking-wider">PERHATIAN</h4>
           <p className="text-red-300/80 text-sm mt-0.5">
-            Web ini masih dalam tahap pengembangan / sedang mencari data valid.
+            Web ini masih dalam tahap pengembangan / sedang mengumpulkan data valid data valid.
           </p>
         </div>
         <button

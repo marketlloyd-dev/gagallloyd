@@ -1,4 +1,6 @@
+// src/components/Footer.jsx
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { MapPin, Phone, Mail, Copy, Check } from 'lucide-react';
 import { socialMedia, contactInfo } from '../data/config';
 
@@ -15,7 +17,6 @@ export default function Footer() {
     }
   };
 
-  // Ikon SVG kustom untuk media sosial
   const InstagramIcon = () => (
     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
@@ -43,8 +44,8 @@ export default function Footer() {
           {/* Brand */}
           <div>
             <h3 className="text-white font-playfair font-bold text-lg mb-3">HIMMAH NW</h3>
-            <p className="text-green-300/60 text-sm">Himpunan Mahasiswa Nahdlatul Wathan</p>
-            <p className="text-green-300/50 text-xs mt-2">Komisariat STMIK</p>
+            <p className="text-green-300/60 text-sm">Komisariat STMIK</p>
+            <p className="text-green-300/50 text-xs mt-2">Himpunan Mahasiswa Nahdlatul Wathan</p>
           </div>
 
           {/* Kontak + copy */}
@@ -102,7 +103,7 @@ export default function Footer() {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-2 px-3 py-2 bg-white/5 hover:bg-white/10 rounded-lg text-green-300 hover:text-white transition-all text-sm"
-                title="Saluran WhatsApp"
+                title="WhatsApp"
               >
                 <WhatsAppIcon /> WhatsApp
               </a>
@@ -119,8 +120,15 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="border-t border-white/10 mt-8 pt-6 text-center text-green-300/40 text-xs">
-          &copy; {new Date().getFullYear()} HIMMAH NW Komisariat STMIK. WEBSITE MASIH DALAM TAHAP PENGEMBANGAN.
+        {/* Panel Admin (link kecil) */}
+        <div className="text-center mt-6 pt-4 border-t border-white/5">
+          <Link to="/admin" className="text-green-400/30 text-xs hover:text-green-300 transition-colors">
+            Admin
+          </Link>
+        </div>
+
+        <div className="border-t border-white/10 mt-4 pt-6 text-center text-green-300/40 text-xs">
+          &copy; {new Date().getFullYear()} HIMMAH NW Komisariat STMIK. All rights reserved.
         </div>
       </div>
     </footer>

@@ -1,6 +1,6 @@
 // Konfigurasi admin — developer bisa menambahkan akun di sini
 export const adminAccounts = [
-  { username: 'admin', password: '1223334444' },
+  { username: 'himmahkomstmik', password: 'himmah2026' },
   { username: 'seliya', password: '123'}
 ];
 

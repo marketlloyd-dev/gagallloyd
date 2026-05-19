@@ -13,7 +13,6 @@ body {
   padding: 0;
 }
 
-/* Smooth scroll */
 html {
   scroll-behavior: smooth;
 }
@@ -64,24 +63,147 @@ html {
   animation: fadeIn 0.6s ease-out forwards;
 }
 
-[contenteditable] {
-  direction: ltr !important;
-  text-align: left !important;
-  unicode-bidi: plaintext !important;
+/* Scrollbar hide */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
 }
 
-/* Paksa editor contentEditable selalu LTR */
-[contentEditable],
-[contentEditable] * {
-  direction: ltr !important;
-  text-align: left !important;
-  unicode-bidi: isolate !important;
+/* Light mode overrides */
+.light body {
+  background-color: #f1f5f9;
 }
 
-/* Placeholder tetap di kiri */
-[contentEditable]:empty:before {
-  content: attr(data-placeholder);
-  color: #9ca3af;
-  direction: ltr !important;
-  text-align: left !important;
+.light .glass {
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.light .glass-nav {
+  background: rgba(255, 255, 255, 0.9);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.light .text-white {
+  color: #0f172a;
+}
+
+.light .text-green-300 {
+  color: #166534;
+}
+
+.light .text-green-100 {
+  color: #14532d;
+}
+
+.light .text-green-200 {
+  color: #15803d;
+}
+
+.light .text-green-400 {
+  color: #16a34a;
+}
+
+.light .text-gray-400 {
+  color: #64748b;
+}
+
+.light .bg-\[\#0a0f0a\] {
+  background-color: #f8fafc;
+}
+
+.light .bg-\[\#0d1a0d\] {
+  background-color: #ffffff;
+}
+
+.light .bg-\[\#111a11\] {
+  background-color: #ffffff;
+  border-color: rgba(0, 0, 0, 0.08);
+}
+
+.light .bg-\[\#002b13\] {
+  background-color: #f1f5f9;
+}
+
+.light .from-\[\#002b13\] {
+  --tw-gradient-from: #f1f5f9;
+}
+
+.light .from-\[\#003d1c\] {
+  --tw-gradient-from: #e2e8f0;
+}
+
+.light .via-\[\#004d24\] {
+  --tw-gradient-via: #cbd5e1;
+}
+
+.light .to-\[\#006b32\] {
+  --tw-gradient-to: #94a3b8;
+}
+
+.light .border-green-900\/30 {
+  border-color: rgba(0, 0, 0, 0.08);
+}
+
+.light .border-white\/10 {
+  border-color: rgba(0, 0, 0, 0.08);
+}
+
+.light .border-white\/20 {
+  border-color: rgba(0, 0, 0, 0.12);
+}
+
+.light .bg-white\/5 {
+  background-color: rgba(0, 0, 0, 0.03);
+}
+
+.light .bg-white\/10 {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.light .hover\:bg-white\/10:hover {
+  background-color: rgba(0, 0, 0, 0.08);
+}
+
+.light .hover\:bg-white\/5:hover {
+  background-color: rgba(0, 0, 0, 0.04);
+}
+
+.light .text-green-300\/60 {
+  color: rgba(21, 128, 61, 0.7);
+}
+
+.light .text-green-300\/70 {
+  color: rgba(21, 128, 61, 0.8);
+}
+
+.light .text-green-100\/80 {
+  color: rgba(20, 83, 45, 0.9);
+}
+
+.light .text-green-400\/50 {
+  color: rgba(22, 163, 74, 0.6);
+}
+
+.light .text-green-400\/60 {
+  color: rgba(22, 163, 74, 0.7);
+}
+
+.light .text-green-100\/70 {
+  color: rgba(20, 83, 45, 0.8);
+}
+
+.light .placeholder-white\/40::placeholder {
+  color: rgba(100, 116, 139, 0.5);
+}
+
+.light .bg-white\/10 {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.light .bg-white\/20 {
+  background-color: rgba(0, 0, 0, 0.1);
 }

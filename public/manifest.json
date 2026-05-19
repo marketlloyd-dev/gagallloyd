@@ -1,0 +1,21 @@
+{
+  "name": "HIMMAH NW Komisariat STMIK",
+  "short_name": "HIMMAH NW",
+  "description": "Website resmi HIMMAH NW Komisariat STMIK. Wadah pergerakan, pengabdian, dan prestasi mahasiswa Nahdlatul Wathan.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#004d24",
+  "theme_color": "#004d24",
+  "icons": [
+    {
+      "src": "/img/logo.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/img/logo.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

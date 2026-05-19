@@ -1,32 +1,56 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 
-// Data default (fallback)
+// Data default (fallback) — anggota divisi sekarang berupa objek
 const defaultPengurus = {
-  ketua: { nama: 'Ketua', foto: '/img/ketua.jpg', },
-  sekretaris: { nama: 'Sekretaris', foto: '/img/sekretaris.jpg', },
-  bendahara: { nama: 'Bendahara', foto: '/img/bendahara.jpg',},
+  ketua: { nama: 'Ketua', foto: '/img/ketua.jpg', nim: '-', jurusan: '-', angkatan: '-' },
+  sekretaris: { nama: 'Sekretaris', foto: '/img/sekretaris.jpg', nim: '-', jurusan: '-', angkatan: '-' },
+  bendahara: { nama: 'Bendahara', foto: '/img/bendahara.jpg', nim: '-', jurusan: '-', angkatan: '-' },
 };
 
 const defaultDivisi = [
   {
-    id: 1, nama: 'Divisi Dakwah & Keagamaan',
+    id: 1,
+    nama: 'Divisi Dakwah & Keagamaan',
     programKerja: ['Pengajian Rutin Mingguan', 'Peringatan Hari Besar Islam', 'Kajian Kitab Kuning', 'Pelatihan Tilawah & Tartil'],
-    anggota: ['Muhammad Ali (Kadiv)', 'Hasan Basri', 'Ahmad Syafi\'i', 'Zainuddin'],
+    anggota: [
+      { nama: 'Muhammad Ali', jabatan: 'Kadiv', foto: '' },
+      { nama: 'Hasan Basri', jabatan: 'Anggota', foto: '' },
+      { nama: "Ahmad Syafi'i", jabatan: 'Anggota', foto: '' },
+      { nama: 'Zainuddin', jabatan: 'Anggota', foto: '' },
+    ],
   },
   {
-    id: 2, nama: 'Divisi Pendidikan & Pelatihan',
+    id: 2,
+    nama: 'Divisi Pendidikan & Pelatihan',
     programKerja: ['Seminar Teknologi', 'Workshop Programming', 'Pelatihan Desain Grafis', 'Study Club'],
-    anggota: ['Baiq Dewi (Kadiv)', 'Lalu Rahman', 'Rizki Maulana', 'Fitriani'],
+    anggota: [
+      { nama: 'Baiq Dewi', jabatan: 'Kadiv', foto: '' },
+      { nama: 'Lalu Rahman', jabatan: 'Anggota', foto: '' },
+      { nama: 'Rizki Maulana', jabatan: 'Anggota', foto: '' },
+      { nama: 'Fitriani', jabatan: 'Anggota', foto: '' },
+    ],
   },
   {
-    id: 3, nama: 'Divisi Sosial & Kemasyarakatan',
+    id: 3,
+    nama: 'Divisi Sosial & Kemasyarakatan',
     programKerja: ['Bakti Sosial', 'Santunan Anak Yatim', 'Bersih Lingkungan', 'Donor Darah'],
-    anggota: ['Abdul Hamid (Kadiv)', 'Nurul Hidayah', 'Samsul Arifin', 'Rina Agustina'],
+    anggota: [
+      { nama: 'Abdul Hamid', jabatan: 'Kadiv', foto: '' },
+      { nama: 'Nurul Hidayah', jabatan: 'Anggota', foto: '' },
+      { nama: 'Samsul Arifin', jabatan: 'Anggota', foto: '' },
+      { nama: 'Rina Agustina', jabatan: 'Anggota', foto: '' },
+    ],
   },
   {
-    id: 4, nama: 'Divisi Minat & Bakat',
+    id: 4,
+    nama: 'Divisi Minat & Bakat',
     programKerja: ['Futsal Competition', 'Pentas Seni', 'Lomba Debat', 'Pelatihan Public Speaking'],
-    anggota: ['Fajar Ramadhan (Kadiv)', 'Baiq Aulia', 'Dimas Saputra', 'Maya Sari'],
+    anggota: [
+      { nama: 'Fajar Ramadhan', jabatan: 'Kadiv', foto: '' },
+      { nama: 'Baiq Aulia', jabatan: 'Anggota', foto: '' },
+      { nama: 'Dimas Saputra', jabatan: 'Anggota', foto: '' },
+      { nama: 'Maya Sari', jabatan: 'Anggota', foto: '' },
+    ],
   },
 ];
 
@@ -63,26 +87,57 @@ export function AppProvider({ children }) {
   const [pengurus, setPengurus] = useState(defaultPengurus);
   const [bannerImages, setBannerImages] = useState([]);
   const [logo, setLogo] = useState(null);
+  const [komentar, setKomentar] = useState({});
+  const [likes, setLikes] = useState({});
+  const [countdownEvent, setCountdownEvent] = useState(null);
+  const [poll, setPoll] = useState(null);
   const [dataLoaded, setDataLoaded] = useState(false);
 
   const DATA_BLOB_URL = 'https://trwurgahpjquoqvn.public.blob.vercel-storage.com/data.json';
   const LOCAL_KEY = 'himmah_data';
 
+  // ---------- Fungsi migrasi data lama ----------
+  const migrateDivisi = (data) => {
+    if (!data || !Array.isArray(data)) return defaultDivisi;
+    return data.map((d) => ({
+      ...d,
+      anggota: d.anggota.map((a) =>
+        typeof a === 'string'
+          ? {
+              nama: a.replace(/\s*\(Kadiv\).*/, '').trim(),
+              jabatan: a.includes('(Kadiv)') ? 'Kadiv' : 'Anggota',
+              foto: '',
+            }
+          : a
+      ),
+    }));
+  };
+
+  const migrateBerita = (data) => {
+    if (!data || !Array.isArray(data)) return defaultBerita;
+    return data.map((b) => {
+      if (!b.paragraf && b.redaksi) {
+        return { ...b, paragraf: [{ judulParagraf: '', isiParagraf: b.redaksi }] };
+      }
+      return b;
+    });
+  };
+
   const applyData = (data) => {
-    setBerita(data.berita || defaultBerita);
-    setDivisi(data.divisi || defaultDivisi);
+    setBerita(migrateBerita(data.berita));
+    setDivisi(migrateDivisi(data.divisi));
     setPengurus(data.pengurus || defaultPengurus);
     setBannerImages(data.bannerImages || []);
     setLogo(data.logo || null);
-    // isLoggedIn TIDAK diambil dari data yang disimpan
+    setKomentar(data.komentar || {});
+    setLikes(data.likes || {});
+    if (data.countdownEvent) setCountdownEvent(data.countdownEvent);
+    if (data.poll) setPoll(data.poll);
   };
 
   useEffect(() => {
-    // 1. Cek flag login DULUAN sebelum load data
     const loginFlag = localStorage.getItem('himmah_login');
-    if (loginFlag === 'true') {
-      setIsLoggedIn(true);
-    }
+    if (loginFlag === 'true') setIsLoggedIn(true);
 
     const loadData = async () => {
       const local = localStorage.getItem(LOCAL_KEY);
@@ -106,14 +161,6 @@ export function AppProvider({ children }) {
         const res = await fetch(`${DATA_BLOB_URL}?t=${Date.now()}`);
         if (res.ok) {
           const json = await res.json();
-          if (json.berita) {
-            json.berita = json.berita.map(b => {
-              if (!b.paragraf && b.redaksi) {
-                return { ...b, paragraf: [{ judulParagraf: '', isiParagraf: b.redaksi }] };
-              }
-              return b;
-            });
-          }
           applyData(json);
           localStorage.setItem(LOCAL_KEY, JSON.stringify(json));
         }
@@ -128,27 +175,22 @@ export function AppProvider({ children }) {
         const res = await fetch(`${DATA_BLOB_URL}?t=${Date.now()}`);
         if (res.ok) {
           const json = await res.json();
-          if (json.berita) {
-            json.berita = json.berita.map(b => {
-              if (!b.paragraf && b.redaksi) {
-                return { ...b, paragraf: [{ judulParagraf: '', isiParagraf: b.redaksi }] };
-              }
-              return b;
-            });
-          }
           if (JSON.stringify(json) !== JSON.stringify(currentLocal)) {
             localStorage.setItem(LOCAL_KEY, JSON.stringify(json));
             applyData(json);
           }
         }
-      } catch (err) {}
+      } catch (err) {
+        // silent
+      }
     };
 
     loadData();
   }, []);
 
+  // ---------- Simpan data ke localStorage + Blob ----------
   const saveAllData = async (data) => {
-    const { isLoggedIn: _, ...dataToSave } = data; // selalu hapus isLoggedIn dari data yang disimpan
+    const { isLoggedIn: _, ...dataToSave } = data;
     localStorage.setItem(LOCAL_KEY, JSON.stringify(dataToSave));
     try {
       await fetch('/api/save-data', {
@@ -163,23 +205,58 @@ export function AppProvider({ children }) {
 
   const saveBerita = (data) => {
     setBerita(data);
-    saveAllData({ berita: data, divisi, pengurus, bannerImages, logo });
+    saveAllData({ berita: data, divisi, pengurus, bannerImages, logo, komentar, likes, countdownEvent, poll });
   };
   const saveDivisi = (data) => {
     setDivisi(data);
-    saveAllData({ berita, divisi: data, pengurus, bannerImages, logo });
+    saveAllData({ berita, divisi: data, pengurus, bannerImages, logo, komentar, likes, countdownEvent, poll });
   };
   const savePengurus = (data) => {
     setPengurus(data);
-    saveAllData({ berita, divisi, pengurus: data, bannerImages, logo });
+    saveAllData({ berita, divisi, pengurus: data, bannerImages, logo, komentar, likes, countdownEvent, poll });
   };
   const saveBanner = (data) => {
     setBannerImages(data);
-    saveAllData({ berita, divisi, pengurus, bannerImages: data, logo });
+    saveAllData({ berita, divisi, pengurus, bannerImages: data, logo, komentar, likes, countdownEvent, poll });
   };
   const saveLogo = (url) => {
     setLogo(url);
-    saveAllData({ berita, divisi, pengurus, bannerImages, logo: url });
+    saveAllData({ berita, divisi, pengurus, bannerImages, logo: url, komentar, likes, countdownEvent, poll });
+  };
+
+  const saveKomentarBaru = (beritaId, data, replace = false) => {
+    const updatedKomentar = {
+      ...komentar,
+      [beritaId]: replace ? data : [...(komentar[beritaId] || []), data],
+    };
+    setKomentar(updatedKomentar);
+    saveAllData({ berita, divisi, pengurus, bannerImages, logo, komentar: updatedKomentar, likes, countdownEvent, poll });
+  };
+
+  const toggleLike = (beritaId) => {
+    const updated = { ...likes, [beritaId]: (likes[beritaId] || 0) + 1 };
+    setLikes(updated);
+    saveAllData({ berita, divisi, pengurus, bannerImages, logo, komentar, likes: updated, countdownEvent, poll });
+  };
+
+  const saveCountdownEvent = (event) => {
+    setCountdownEvent(event);
+    saveAllData({ berita, divisi, pengurus, bannerImages, logo, komentar, likes, countdownEvent: event, poll });
+  };
+
+  const removeCountdownEvent = () => {
+    setCountdownEvent(null);
+    saveAllData({ berita, divisi, pengurus, bannerImages, logo, komentar, likes, countdownEvent: null, poll });
+  };
+
+  const savePoll = (newPoll) => {
+    setPoll(newPoll);
+    saveAllData({ berita, divisi, pengurus, bannerImages, logo, komentar, likes, countdownEvent, poll: newPoll });
+  };
+
+  const removePoll = () => {
+    setPoll(null);
+    saveAllData({ berita, divisi, pengurus, bannerImages, logo, komentar, likes, countdownEvent, poll: null });
   };
 
   const login = () => {
@@ -209,6 +286,10 @@ export function AppProvider({ children }) {
         pengurus, savePengurus,
         bannerImages, saveBanner,
         logo, saveLogo,
+        komentar, saveKomentarBaru,
+        likes, toggleLike,
+        countdownEvent, saveCountdownEvent, removeCountdownEvent,
+        poll, savePoll, removePoll,
       }}
     >
       {children}
